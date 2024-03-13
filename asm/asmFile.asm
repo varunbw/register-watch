@@ -42,6 +42,7 @@ section .text
         mov rsi, num
         
         ; This loop runs once for each digit in the number
+        ; --   line fetcher ---line--> parser ---parsed list---> interpreter
         up1:
             ; Move byte pointed to by rsi to cl
             mov cl, byte[rsi]
