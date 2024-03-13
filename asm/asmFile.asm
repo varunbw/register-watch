@@ -1,10 +1,10 @@
-%macro rw 4
-    mov rax, %1
-    mov rdi, %2
-    mov rsi, %3
-    mov rdx, %4
-    syscall
-%endmacro
+; %macro rw 4
+;     mov rax, %1
+;     mov rdi, %2
+;     mov rsi, %3
+;     mov rdx, %4
+;     syscall
+; %endmacro
 
 section .data
     ; Initialize array of size 64, each element of size 1 byte
@@ -120,3 +120,6 @@ section .text
     
     rw 60, 0, 0, 0
     syscall
+
+; mov rax, rbx
+; mov rax, 5

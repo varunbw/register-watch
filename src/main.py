@@ -1,6 +1,10 @@
 import interpreter as ipr
+import fileParser as fp
+import time as time
 
 class CPU:
+
+    
 
     # Initialize register values
     def __init__(self) -> None:
@@ -20,7 +24,7 @@ class CPU:
         
         # Source Index
         self.rsi = 0x0000
-        # Destination Index
+        # op1ination Index
         self.rdi = 0x0000
 
 
@@ -65,17 +69,39 @@ class CPU:
 
             strToRegDict[reg] = 0x0000
 
+
+    def printRegContents(self, line):
+        print('-----------------------')
+        print(line)
+        print('rax: ', self.rax)
+        print('rbx: ', self.rbx)
+        print('rcx: ', self.rcx)
+        print('rdx: ', self.rdx)
+        print('-----------------------\n')
+
         
 
     
 
 def main():
     # Temporary ASM file to debug
-    filePath = '../asm/asmFile.asm'
+    filePath = '../asm/temp.asm'
 
-    # Instantiate an object
+    # start = time.time()
+    gigaList = fp.parse(filePath)
+    # end = time.time()
+
+    # print('Time taken to parse: ', end - start)
+
+    # for line in gigaList:
+    #     print(line)
+
+    ipr.interpret(gigaList)
+
+
 
 
 if __name__ == '__main__':
+    # Instantiate an object
     cpu = CPU()
     main()

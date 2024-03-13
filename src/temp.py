@@ -1,5 +1,3 @@
-# myList = 'jmp up1'.split()
-myList = 'mov rdx, %4'.split()
+a = 'ascas'
 
-print(type(myList))
-print(myList)
+print(type(a))

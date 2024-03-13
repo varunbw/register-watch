@@ -1,4 +1,5 @@
 from main import *
+import time
 
 def main():
     interpret()
@@ -17,32 +18,32 @@ def main():
 
 def interpret(parsedList, instCode = 0):
 
-    regMap = {
-        'rax' : cpu.rax,
-        'rbx' : cpu.rbx,
-        'rcx' : cpu.rcx,
+    cpu = CPU()
+    
+    for line in parsedList:
         
-        'rdx' : cpu.rdx,
+        inst = ''
         
-        'rsp' : cpu.rsp,
-        'rbp' : cpu.rbp,
+        # Basic case (ex: mov rax, rbx)
+        if instCode == 0 and len(line) == 3:
+
+            inst = line[0]
+            op1 = line[1]
+            op2 = line[2]
+
+            if inst == 'mov':
+                if isinstance(op1, str) and isinstance(op2, str):
+                    setattr(cpu, op1, getattr(cpu, op2))
+                    cpu.printRegContents(line)
+                
+                if isinstance(op2, int):
+                    setattr(cpu, op1, op2)
+                    cpu.printRegContents(line)
+
+
+    
+            
         
-        'rsi' : cpu.rsi,
-        'rdi' : cpu.rdi
-    }
-
-    # Basic case (ex: mov rax, rbx)
-    if instCode == 0:
-
-        inst = parsedList[0]
-        op1 = parsedList[1]
-        op2 = parsedList[2]
-
-        if inst == 'mov':
-            regMap[op1] = regMap[op2]
-
-
-
     return
 
 
