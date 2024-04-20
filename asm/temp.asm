@@ -1,8 +1,11 @@
-mov rax, 5
+section .data
+    count db 4
 
-mov rcx, rax
-mov rbx, rax
+section .text
 
-mov rdx, 123
-
-mov rdx, rbx
+    global _start
+    _start:
+    labels:
+    mov rax, 5
+    mul rax, count
+    cmp rbx, rax

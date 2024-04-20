@@ -1,4 +1,16 @@
-def parse(filePath):
+import re
+
+class VariableInfo:
+    def __init__(self) -> None:
+
+        self.name = ''
+        self.type = ''
+        self.value = ''
+        self.isArray = False
+        self.sizeOfArray = 0
+    
+
+def parseMainFile(filePath):
 
     gigaList = []
 
@@ -40,83 +52,90 @@ def parse(filePath):
             
     return gigaList
 
-'''
-if(parsedLine != []):
-                if(parsedLine[0][0] == ';'):
-                    instruction = ''
 
-                elif (',' in line):
-                    instruction = parsedLine[0].strip()
-                    comma_index = line.index(',')
-                    var1 = line[len(instruction) + 1:comma_index].strip()
-                    var2 = line[comma_index+1:].strip()
+def parseVariables(gigaList):
+    """
+        Format of Variable List:
+        +------+------+-------+--------+---------------+
+        | Name | Type | Value | Array? | Size of array |
+        +------+------+-------+--------+---------------+
+        | str  | str  | str   | bool   | int           |
+        +------+------+-------+--------+---------------+
+    """
+    variableList = list()
 
-                elif(parsedLine[0][len(parsedLine[0])-1] == ':'):
-                    instruction = parsedLine[0].strip()
+    currentlyInDataSection = False
 
-                elif (parsedLine[0].lower() == 'syscall'):
-                    instruction = 'syscall'
+    for line in gigaList:
 
-                elif(parsedLine[0].lower() == '%macro'):
-                    instruction = parsedLine[0].strip()
-                    var1 = parsedLine[1].strip()
-                    var2 = parsedLine[2].strip()
-                        
-                elif(parsedLine[0].lower() == '%endmacro'):
-                    instruction = parsedLine[0].strip()
+        if len(line) == 0:
+            continue
+        
+        if line[1] == '.data' or line[1] == '.bss':
+            currentlyInDataSection = True
+            continue
 
-                elif(parsedLine[0].lower() == 'section'):
-                    instruction = parsedLine[0].strip()
-                    var1 = parsedLine[1].strip()
+        elif line[1] == '.text':
+            currentlyInDataSection = False
+            break
 
-                elif(parsedLine[0].lower() == 'global'):
-                    instruction = parsedLine[0].strip()
-                    var1 = parsedLine[1].strip()
+        if currentlyInDataSection:
+            variable = VariableInfo()
+            lineStr = str()
 
+            for ele in line:
+                lineStr += str(ele)
+            
+            # Var Name
+            variable.name = line[0]
+            
+            # Var Type
+            dataType = re.findall('db|dw|dd|dq|resb|resw|resd|resq', lineStr)
+            if len(dataType) != 0:
+                variable.type = dataType[0]
 
-                elif(parsedLine[0].lower().startswith('buffer')):
-                    instruction = parsedLine[0].strip()
-                    var1 = parsedLine[1].strip()
-                    var2 = parsedLine[2].strip()
+                # Determine index of the datatype
+                indexOfDT = lineStr.index(dataType[0])
 
-                elif(parsedLine[1].lower() == 'equ'):
-                    instruction = parsedLine[0].strip()
-                    var1 = parsedLine[1].strip()
-                    var2 = parsedLine[2].strip()
+            # Var Value
+            variable.value = lineStr[indexOfDT + 2:len(lineStr)]
 
-                elif(parsedLine[1].lower().startswith('res')):
-                    instruction = parsedLine[0].strip()
-                    var1 = parsedLine[1].strip()
-                    var2 = parsedLine[2].strip()
-
-
-                elif(parsedLine[1].lower().startswith('d')):
-                    d_index = line.index(parsedLine[1])
-                    instruction = line[0:d_index].strip()
-                    var1 = parsedLine[1].strip()
-                    var2 = line[d_index+2:].strip()
-
-                elif (parsedLine[len(parsedLine)-2].lower() == 'db' or 'dt' or 'dq' or 'dd' or 'dw'):
-                    d_index = line.index(parsedLine[len(parsedLine)-2])
-                    instruction = line[0:d_index].strip()
-                    var1 = parsedLine[len(parsedLine)-2]
-                    var2 = line[d_index+2:].strip()
-
+            # Check if array
+            if len(re.findall('times', lineStr)) == 1:
+                variable.isArray = True
                 
-                    
-                list_of_inputs.append(instruction)
-                list_of_inputs.append(var1)
-                list_of_inputs.append(var2)
-                    
+                indexOfTimes = lineStr.index('times')
 
-                gigaList.append(list_of_inputs)
-
+                sizeOfVar = re.findall('times\d', lineStr)
+                if len(sizeOfVar) > 0:
+                    variable.sizeOfArray = re.findall('\d', sizeOfVar[0])[0]
+                
+                
             else:
-                instruction = ''
-                list_of_inputs.append(instruction)
-                list_of_inputs.append(var1)
-                list_of_inputs.append(var2)
+                variable.isArray = False
 
-                gigaList.append(list_of_inputs)
+            variableList.append(variable)
+    
+    return variableList
 
-'''
+    # for var in variableList:
+    #     print(var.name, var.type, var.value, var.sizeOfArray, var.isArray)
+
+
+def parseLabels(gigaList):
+    """
+        Format of label dictionary:
+        Label Name : Line Number in file
+    """
+    labels = dict()
+
+    for lineNum in range(len(gigaList)):
+        if len(gigaList[lineNum]) != 1:
+           continue
+
+        potentialLabel = re.findall('\w+:', gigaList[lineNum][0])
+
+        if len(potentialLabel) == 1:
+            labels.update({potentialLabel[0] : lineNum})
+
+    return labels
