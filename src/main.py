@@ -1,6 +1,9 @@
 import interpreter as ipr
 import fileParser as fp
-import time as time
+import guiRenderer as gr
+import threading as th
+import time
+
 
 class CPU:
 
@@ -61,28 +64,41 @@ class CPU:
         print('| rdx: ', self.rdx)
         print('+------------------------\n')
 
-        
 
-    
+holdVariable = 0
 
-def main():
+def pseudoMain():
     # Temporary ASM file to debug
     filePath = '../asm/temp.asm'
 
-    # start = time.time()
-    gigaList = fp.parseMainFile(filePath)
-    variableList = fp.parseVariables(gigaList=gigaList)
-    fp.parseLabels(gigaList)
-    # end = time.time()
-    # print('Time taken to parse: ', end - start)
-
-    # for line in gigaList:
-    #     print(line)
-
     lineNum = 0
-    while lineNum < len(gigaList):
-        lineNum = ipr.interpret(gigaList[lineNum], lineNum, variableList, cpu)
 
+    mainList = fp.parseMainFile(filePath)
+    variableList = fp.parseVariables(mainList)
+    labelsDict = fp.parseLabels(mainList)
+
+    codeSize = len(mainList)
+
+    while lineNum < codeSize:
+        lineNum = ipr.interpret(mainList[lineNum], lineNum, variableList, labelsDict, cpu)
+
+        # gr.updateValues(cpu)
+        
+        # while gr.waitForButtonClick() == False:
+        #     continue
+            
+    return
+    
+
+
+
+def main():
+    # window = gr.makeWindow()
+
+    # everythingButGUI = th.Thread(target=pseudoMain, args=(), daemon=True)
+    # everythingButGUI.start()
+    pseudoMain()
+    # gr.renderWindow(window)
 
 
 

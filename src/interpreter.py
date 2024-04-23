@@ -1,4 +1,3 @@
-import time
 import constants as cnst
 
 def main():
@@ -6,11 +5,10 @@ def main():
 
 registerList = ['rax', 'rbx', 'rcx', 'rsp', 'rbp', 'rsi', 'rdi', 'rdx']
 
-def interpret(line, lineNum, variableList, cpu) -> int:
+def interpret(line, lineNum, variableList, labelsList, cpu) -> int:
 
     inst = ''
     
-    # ! Remove this case later
     # Basic case (ex: mov rax, rbx)
     if len(line) == 3:
 
@@ -30,13 +28,32 @@ def interpret(line, lineNum, variableList, cpu) -> int:
         
         if inst == 'cmp':
             inst_cmp(line[1], line[2], cpu, variableList)
+    
+
+    # jump instructions
+    elif len(line) == 2:
+
+        inst = line[0]
         
-        # if inst[0] == 'j':
-        #     inst_jmp(line[1], line[2], cpu, variableList)
+        # all forms of jump
+        if inst[0] == 'j':
+            retVal = inst_jmp(line[0], line[1], labelsList, cpu.cmpResult)
 
+            if retVal == -1:
+                return line + 1
+            else:
+                return retVal
+    
+    # syscall + others
+    elif len(line) == 1:
+        
+        inst = line[0]
 
+        if inst == 'syscall':
+            print('here')
+            handleSyscall(cpu)
 
-        cpu.printRegContents(line)
+    cpu.printRegContents(line)
     
     return lineNum + 1
 
@@ -67,9 +84,6 @@ def inst_mov(op1, op2, cpu, variableList) -> None:
     # mov reg, const
     elif isinstance(op2, int):
         setattr(cpu, op1, op2)
-
-    # print(variableList[0].name)
-    # print(variableList[0].value)
 
     return
 
@@ -199,12 +213,58 @@ def inst_cmp(op1, op2, cpu, variableList) -> None:
     return
     
 
+# -- jmp
+def inst_jmp(inst, op1, labelsDict, cmpValue) -> int:
 
-# def inst_jmp(op1, op2, cpu, variableList) -> None:
+    match inst:
+        case 'jmp':
+            return labelsDict[op1]
+        
+        case 'jbe':
+            if cmpValue <= 0:
+                return labelsDict[op1]
+            else:
+                return -1
+        
+        case 'jb':
+            if cmpValue < 0:
+                return labelsDict[op1]
+            else:
+                return -1
+            
+        case 'jae':
+            if cmpValue >= 0:
+                return labelsDict[op1]
+            else:
+                return -1
+            
+        case 'ja':
+            if cmpValue > 0:
+                return labelsDict[op1]
+            else:
+                return -1
+        
+        case 'je':
+            if cmpValue == 0:
+                return labelsDict[op1]
+            else:
+                return -1
+        
+    return -1
+    
 
+
+def handleSyscall(cpu) -> None:
+
+    # Printing
+    if cpu.rax == 1 and cpu.rdi == 1:
+        print('Print: {}\n'.format(cpu.rsi))
     
-    
-    
+    # Input
+    elif cpu.rax == 0 and cpu.rdi == 0:
+        cpu.rsi = int(input('Enter: '))
+
+    return
     
 
 

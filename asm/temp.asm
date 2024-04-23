@@ -1,11 +1,8 @@
-section .data
-    count db 4
+mov rax, 0
+mov rdi, 0
+mov rsi, 5
+syscall
 
-section .text
-
-    global _start
-    _start:
-    labels:
-    mov rax, 5
-    mul rax, count
-    cmp rbx, rax
+mov rax, 1
+mov rdi, 1
+syscall

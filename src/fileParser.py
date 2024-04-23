@@ -68,7 +68,7 @@ def parseVariables(gigaList):
 
     for line in gigaList:
 
-        if len(line) == 0:
+        if len(line) == 0 or len(line) == 1:
             continue
         
         if line[1] == '.data' or line[1] == '.bss':
@@ -136,6 +136,8 @@ def parseLabels(gigaList):
         potentialLabel = re.findall('\w+:', gigaList[lineNum][0])
 
         if len(potentialLabel) == 1:
-            labels.update({potentialLabel[0] : lineNum})
+            labels.update({potentialLabel[0][0:-1] : lineNum})
+
+    print(labels)
 
     return labels
