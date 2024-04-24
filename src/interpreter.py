@@ -8,6 +8,7 @@ registerList = ['rax', 'rbx', 'rcx', 'rsp', 'rbp', 'rsi', 'rdi', 'rdx']
 def interpret(line, lineNum, variableList, labelsList, cpu) -> int:
 
     inst = ''
+    toPrint = ''
     
     # Basic case (ex: mov rax, rbx)
     if len(line) == 3:
@@ -51,11 +52,12 @@ def interpret(line, lineNum, variableList, labelsList, cpu) -> int:
 
         if inst == 'syscall':
             print('here')
-            handleSyscall(cpu)
+            toPrint = handleSyscall(cpu)
+                
 
     cpu.printRegContents(line)
     
-    return lineNum + 1
+    return lineNum + 1, toPrint
 
 
 
@@ -254,11 +256,12 @@ def inst_jmp(inst, op1, labelsDict, cmpValue) -> int:
     
 
 
-def handleSyscall(cpu) -> None:
+def handleSyscall(cpu) -> str:
 
     # Printing
     if cpu.rax == 1 and cpu.rdi == 1:
-        print('Print: {}\n'.format(cpu.rsi))
+        # print('Print: {}\n'.format(cpu.rsi))
+        return str(cpu.rsi)
     
     # Input
     elif cpu.rax == 0 and cpu.rdi == 0:

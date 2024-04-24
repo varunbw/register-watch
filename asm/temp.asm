@@ -1,8 +1,14 @@
-mov rax, 0
-mov rdi, 0
-mov rsi, 5
-syscall
+section .bss
+    temp resw 1
 
-mov rax, 1
-mov rdi, 1
-syscall
+section .data
+    mov rax, 2
+    mov temp, rax
+
+    mov rax, 5
+    mul rax, temp
+
+    mov rsi, rax
+    mov rax, 1
+    mov rdi, 1
+    syscall

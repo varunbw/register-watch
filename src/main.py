@@ -80,25 +80,34 @@ def pseudoMain():
     codeSize = len(mainList)
 
     while lineNum < codeSize:
-        lineNum = ipr.interpret(mainList[lineNum], lineNum, variableList, labelsDict, cpu)
-
-        # gr.updateValues(cpu)
         
-        # while gr.waitForButtonClick() == False:
-        #     continue
-            
+        currentLineNum = lineNum
+
+        lineNum, printStr = ipr.interpret(mainList[lineNum], lineNum, variableList, labelsDict, cpu)
+        gr.updateValues(cpu, mainList[currentLineNum], printStr)
+
+        while gr.waitForButtonClick() == False:
+            continue
+    
+    gr.updateValues(cpu, 'Program over', '------')
+
+    print('Program over')
+    
     return
     
 
 
 
 def main():
-    # window = gr.makeWindow()
 
-    # everythingButGUI = th.Thread(target=pseudoMain, args=(), daemon=True)
-    # everythingButGUI.start()
-    pseudoMain()
-    # gr.renderWindow(window)
+    # gr.filePathInputWindow()
+    
+    window = gr.makeMainWindow()
+
+    everythingButGUI = th.Thread(target=pseudoMain, args=(), daemon=True)
+    everythingButGUI.start()
+
+    gr.renderWindow(window)
 
 
 
