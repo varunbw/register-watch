@@ -2,8 +2,7 @@ import interpreter as ipr
 import fileParser as fp
 import guiRenderer as gr
 import threading as th
-import time
-
+import sys
 
 class CPU:
 
@@ -67,9 +66,8 @@ class CPU:
 
 holdVariable = 0
 
-def pseudoMain():
+def pseudoMain(filePath):
     # Temporary ASM file to debug
-    filePath = '../asm/temp.asm'
 
     lineNum = 0
 
@@ -100,11 +98,16 @@ def pseudoMain():
 
 def main():
 
-    # gr.filePathInputWindow()
+    if len(sys.argv) == 1:
+        print('Provide file path as argument')
+        print('Usage: main.py <File-Path>')
+        return
     
-    window = gr.makeMainWindow()
+    filePath = str(sys.argv[1])
+    
+    window = gr.makeMainWindow(filePath=filePath)
 
-    everythingButGUI = th.Thread(target=pseudoMain, args=(), daemon=True)
+    everythingButGUI = th.Thread(target=pseudoMain, args=(filePath,), daemon=True)
     everythingButGUI.start()
 
     gr.renderWindow(window)

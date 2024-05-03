@@ -9,32 +9,10 @@ def buttonClick():
     buttonClicked = True
     return
 
-
-def filePathInputWindow():
-
-    ctk.set_appearance_mode("dark")
-    ctk.set_default_color_theme("dark-blue")
-    
-    root = ctk.CTk()
-    root.geometry("960x540")
-
-    inputBox = ctk.CTkTextbox(master=root, wrap='word', font=(fontUsed, 24))
-
-    inputBox.pack()
-
-    root.mainloop()
-
-    input()
-
-    stopProg(root=root)
-
-    return
     
 def stopProg(root):
     root.quit()
     root.destroy()
-
-
 
 
 class MainWindow:
@@ -86,7 +64,7 @@ class MainWindow:
 window = MainWindow()
 
 
-def makeMainWindow() -> MainWindow:
+def makeMainWindow(filePath) -> MainWindow:
     
     ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme("dark-blue")
@@ -94,7 +72,6 @@ def makeMainWindow() -> MainWindow:
     window.root.geometry("960x540")
 
     program_code = ''
-    filePath = "../asm/temp.asm"
 
     with open(filePath, "r") as file:
         program_code = file.read()
@@ -133,9 +110,6 @@ def makeMainWindow() -> MainWindow:
     window.rbpLabel.pack(pady=5, padx=5,)
     window.rsiLabel.pack(pady=5, padx=5,)
     window.rdiLabel.pack(pady=5, padx=5,)
-
-
-
 
     # Button to move forward
     # window.stepButton.bind('<Button-1>', buttonClick)
