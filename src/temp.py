@@ -1,3 +1,6 @@
-a = 'ascas'
+a = 5
+b = a
+a = 10
 
-print(type(a))
+print(a)
+print(b)

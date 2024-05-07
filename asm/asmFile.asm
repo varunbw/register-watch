@@ -11,7 +11,7 @@ section .data
     numArray times 64 db 1
 
     msgVal db "Value: "
-    lenmsgVal equ $-msgVal 
+    lenmsgVal equ $-msgVal
 
     msgRes db "Result of array addition is: "
     lenmsgRes equ $-msgRes
@@ -42,7 +42,6 @@ section .text
         mov rsi, num
         
         ; This loop runs once for each digit in the number
-        ; --   line fetcher ---line--> parser ---parsed list---> interpreter
         up1:
             ; Move byte pointed to by rsi to cl
             mov cl, byte[rsi]
