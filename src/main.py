@@ -2,6 +2,7 @@ import interpreter as ipr
 import fileParser as fp
 import guiRenderer as gr
 import threading as th
+import time
 import sys
 
 class CPU:
@@ -30,30 +31,6 @@ class CPU:
         self.cmpResult = 0x0000
 
 
-    # Reset the system to its default state
-    def reset(self):
-
-        # General Purpose
-        self.rax = 0x0000
-        self.rbx = 0x0000
-        self.rcx = 0x0000
-
-        # Stack Pointer
-        self.rsp = 0x0000
-        # Base Pointer
-        self.rbp = 0x0000
-        
-        # Source Index
-        self.rsi = 0x0000
-        # Destination Index
-        self.rdi = 0x0000
-        
-        # Data
-        self.rdx = 0x0000
-
-        self.cmpResult = 0x0000
-
-
     def printRegContents(self, line):
         print('+------------------------')
         print('|', line)
@@ -62,6 +39,19 @@ class CPU:
         print('| rcx: ', self.rcx)
         print('| rdx: ', self.rdx)
         print('+------------------------\n')
+
+    
+    def copyContents(self, cpu):
+        
+        self.rax = cpu.rax
+        self.rbx = cpu.rbx
+        self.rcx = cpu.rcx
+        self.rdx = cpu.rdx
+        self.rsp = cpu.rsp
+        self.rbp = cpu.rbp
+        self.rsi = cpu.rsi
+        self.rdi = cpu.rdi
+        self.cmpResult = cpu.cmpResult
 
 
 holdVariable = 0
@@ -76,18 +66,23 @@ def pseudoMain(filePath):
     labelsDict = fp.parseLabels(mainList)
 
     codeSize = len(mainList)
-
+    
+    oldCPU = CPU()
     while lineNum < codeSize:
         
         currentLineNum = lineNum
 
+        oldCPU.copyContents(cpu)
+        
         lineNum, printStr = ipr.interpret(mainList[lineNum], lineNum, variableList, labelsDict, cpu)
-        gr.updateValues(cpu, mainList[currentLineNum], printStr)
+        
+        gr.updateValues(cpu, oldCPU, mainList[currentLineNum], printStr)
 
         while gr.waitForButtonClick() == False:
+            time.sleep(0.5)
             continue
     
-    gr.updateValues(cpu, 'Program over', '------')
+    gr.updateValues(cpu, oldCPU, 'Program over', '------')
 
     print('Program over')
     

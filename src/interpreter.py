@@ -263,10 +263,6 @@ def handleSyscall(cpu) -> str:
         # print('Print: {}\n'.format(cpu.rsi))
         return str(cpu.rsi)
     
-    # Input
-    elif cpu.rax == 0 and cpu.rdi == 0:
-        cpu.rsi = int(input('Enter: '))
-
     return
     
 

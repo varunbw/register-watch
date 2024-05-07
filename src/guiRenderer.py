@@ -26,7 +26,7 @@ class MainWindow:
 
         self.actualCode = ctk.CTkTextbox(master=self.leftFrame, wrap="word", font=(fontUsed, 24))
 
-        self.registerTitle = ctk.CTkLabel(master=self.rightFrame, text="Register Contents",font=(fontUsed, 24))
+        self.registerTitle = ctk.CTkLabel(master=self.rightFrame, text="Register  New   Old",font=(fontUsed, 24))
 
         # Register frames
         self.raxFrame = ctk.CTkFrame(master=self.rightFrame)
@@ -142,9 +142,9 @@ def waitForButtonClick():
 
 
 
-def updateValues(cpu, lineList, toPrint):
+def updateValues(cpu, oldCPU, lineList, toPrint):
 
-    registerContents = {
+    registerContents_New = {
         'rax': 0,
         'rbx': 0,
         'rcx': 0,
@@ -156,8 +156,24 @@ def updateValues(cpu, lineList, toPrint):
     }
 
     # Get values from CPU
-    for key in registerContents.keys():
-        registerContents[key] = getattr(cpu, key)
+    for key in registerContents_New.keys():
+        registerContents_New[key] = getattr(cpu, key)
+
+
+    registerContents_Old = {
+        'rax': 0,
+        'rbx': 0,
+        'rcx': 0,
+        'rdx': 0,
+        'rsp': 0,
+        'rbp': 0,
+        'rsi': 0,
+        'rdi': 0
+    }
+
+    # Get values from old CPU
+    for key in registerContents_Old.keys():
+        registerContents_Old[key] = getattr(oldCPU, key)
 
     line = "Current Line\n"
     for ele in lineList:
@@ -165,16 +181,15 @@ def updateValues(cpu, lineList, toPrint):
 	
     window.currentLine.configure(text = str(line))
 
-    window.raxLabel.configure(text = "rax  |   " + str(registerContents['rax']))
-    window.rbxLabel.configure(text = "rbx  |   " + str(registerContents['rbx']))
-    window.rcxLabel.configure(text = "rcx  |   " + str(registerContents['rcx']))
-    window.rdxLabel.configure(text = "rdx  |   " + str(registerContents['rdx']))
-    window.rspLabel.configure(text = "rsp  |   " + str(registerContents['rsp']))
-    window.rbpLabel.configure(text = "rbp  |   " + str(registerContents['rbp']))
-    window.rsiLabel.configure(text = "rsi  |   " + str(registerContents['rsi']))
-    window.rdiLabel.configure(text = "rdi  |   " + str(registerContents['rdi']))
+    window.raxLabel.configure(text = "rax  |   " + str(registerContents_New['rax']) + "  |  " + str(registerContents_Old['rax']))
+    window.rbxLabel.configure(text = "rbx  |   " + str(registerContents_New['rbx']) + "  |  " + str(registerContents_Old['rbx']))
+    window.rcxLabel.configure(text = "rcx  |   " + str(registerContents_New['rcx']) + "  |  " + str(registerContents_Old['rcx']))
+    window.rdxLabel.configure(text = "rdx  |   " + str(registerContents_New['rdx']) + "  |  " + str(registerContents_Old['rdx']))
+    window.rspLabel.configure(text = "rsp  |   " + str(registerContents_New['rsp']) + "  |  " + str(registerContents_Old['rsp']))
+    window.rbpLabel.configure(text = "rbp  |   " + str(registerContents_New['rbp']) + "  |  " + str(registerContents_Old['rbp']))
+    window.rsiLabel.configure(text = "rsi  |   " + str(registerContents_New['rsi']) + "  |  " + str(registerContents_Old['rsi']))
+    window.rdiLabel.configure(text = "rdi  |   " + str(registerContents_New['rdi']) + "  |  " + str(registerContents_Old['rdi']))
 
     window.printLabel.configure(text = "stdout\n" + str(toPrint))
-
 
     window.root.update()
